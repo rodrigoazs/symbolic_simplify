@@ -12,10 +12,14 @@ from sym_simplify import *
 from sym_expand import *
 
 def __main__():
-    print('teste')
-    a = Node(NODE.OP, OP.ADD, [createInteger(1), createInteger(1),createInteger(1),createInteger(1),createInteger(1),createInteger(1)])
-    b = automatic_simplify(a)
-    print(b.children)
+    #print('teste')
+    a = Node(NODE.OP, OP.MUL, [createInteger(5), createSymbol("a")])
+    #print(toTree(a))
+    b = Node(NODE.OP, OP.POW, [a, createSymbol("x")])
+    c = Node(NODE.OP, OP.MUL, [a, a, b])
+    #print(toTree(c))
+    d = automatic_simplify(c)
+    print(toTree(d))
 
 if __name__ == "__main__":
     __main__()

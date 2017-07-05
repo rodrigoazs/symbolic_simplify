@@ -160,7 +160,7 @@ def is_symbol(node, symbol):
 	if(kind(node) == NODE.SYM and node.value == symbol):
 		return True
 	else:
-		return False;
+		return False
 
 # Free of Symbol (u, s)
 # Return True if the node u does not contain a certain symbol s, otherwise returns False

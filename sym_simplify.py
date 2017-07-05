@@ -2,6 +2,7 @@ from sym_struct import *
 from sym_functions import *
 from sym_evaluate import *
 from sym_order import *
+from sym_to import *
 from functools import cmp_to_key
 
 # Automatic Simplifiy (u)
@@ -30,7 +31,7 @@ def automatic_simplify(node):
         elif node.value == OP.NEG:
             ret = simplify_difference(children[0])
         elif node.value == OP.POW:
-            simplify_power(construct(OP.POW, [children[0], children[1]]))
+            ret = simplify_power(construct(OP.POW, [children[0], children[1]]))
     elif node.type == NODE.FUNC:
         # not implemented yet
         children = []
@@ -97,7 +98,7 @@ def simplify_square_root_power(v, w):
             if(positive):
                 return createInteger(s)
             else:
-                return simplify_product(construct(OP.MUL, [createInteger(s), createSymbol(SYM_IMAGINARY)]))
+                return simplify_product(construct(OP.MUL, [createInteger(s), createSymbol(SYM.IMAGINARY)]))
         elif(not positive):
             return simplify_product(construct(OP.MUL, [construct(OP.POW, [createInteger(math.abs(v.value)), w]), createSymbol(SYM.IMAGINARY)]))
     return construct(OP.POW, [v, w])
@@ -138,14 +139,14 @@ def simplify_integer_power(v, n):
         return construct(OP.MUL, ret)
     # added - transforming i^2 to -1
     # (Should it be implemented here?)
-    elif(is_symbol(v, SYM_IMAGINARY) and kind(n) == NODE.INT):
-        if(n.value == 2):
-            return createInteger(-1)
-        else:
-            if(n.value % 2):
-                return construct(OP.MUL, [createInteger(math.pow(-1, (n.value-1)/2)), createSymbol(SYM_IMAGINARY)])
-            else:
-                return createInteger(math.pow(-1, n.value/2))
+    #elif(is_symbol(v, SYM.IMAGINARY) and kind(n) == NODE.INT):
+    #    if(n.value == 2):
+    #        return createInteger(-1)
+    #    else:
+    #        if(n.value % 2):
+    #            return construct(OP.MUL, [createInteger(math.pow(-1, (n.value-1)/2)), createSymbol(SYM.IMAGINARY)])
+    #        else:
+    #            return createInteger(math.pow(-1, n.value/2))
     else:
         return construct(OP.POW, [v, n])
 
@@ -153,12 +154,16 @@ def simplify_integer_power(v, n):
 # The operator Simplify sum(u)
 # In development
 def simplify_sum(node):
+	print('a')
+	print(node)   
+	print(toDict(node))
+	print('a')
 	if(kind(node) == OP.ADD):
 		if(len(node.children) == 1):
 			return node.children[0]
-		else:       			
+		else: 			
 			v = simplify_sum_rec(node.children)
-			print(v[0].value)    
+			print(v)    
 			if(len(v) == 1):
 				return v[0]
 			elif(len(v) >= 2):
@@ -178,7 +183,7 @@ def simplify_sum_rec(children):
     ret = 0
     new_children = []
     for i in range(len(children)):
-        simplified =  simplify_sum_rec(children[i].children) if kind(children[i]) == OP.ADD else children[i]
+        simplified = simplify_sum_rec(children[i].children) if kind(children[i]) == OP.ADD else children[i]
         if(isinstance(simplified, list)):
             new_children.extend(simplified)
         else:
@@ -294,7 +299,7 @@ def group_product_terms(left, right):
 	# 	return simplify_def(createNode(NODE.FUNC, FUNC.EXP, simplify_sum(construct(OP.ADD, operand(left, 0), operand(right, 0)))))
 	# }
 	elif(compare(base(left), base(right)) == 0):
-		return simplify_power(construct(OP.POW, base(left), simplify_sum(construct(OP.ADD, exponent(left), exponent(right)))))
+		return simplify_power(construct(OP.POW, [base(left), simplify_sum(construct(OP.ADD, [exponent(left), exponent(right)]))]))
 
 # Group All Product Terms (u)
 # Responsible for grouping all the children of a product
