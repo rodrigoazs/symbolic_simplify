@@ -1,3 +1,6 @@
+from sym_struct import *
+from sym_functions import *
+
 # Evaluate quotient (v,w)
 # an integer or a fraction in def notation
 def evaluate_quotient(v, w):

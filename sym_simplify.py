@@ -1,5 +1,8 @@
-import struct
-import functions
+from sym_struct import *
+from sym_functions import *
+from sym_evaluate import *
+from sym_order import *
+from functools import cmp_to_key
 
 # Automatic Simplifiy (u)
 # To begin, since integers and symbols are in simplified form, the pro-
@@ -153,8 +156,9 @@ def simplify_sum(node):
 	if(kind(node) == OP.ADD):
 		if(len(node.children) == 1):
 			return node.children[0]
-		else:
+		else:       			
 			v = simplify_sum_rec(node.children)
+			print(v[0].value)    
 			if(len(v) == 1):
 				return v[0]
 			elif(len(v) >= 2):
@@ -180,7 +184,7 @@ def simplify_sum_rec(children):
         else:
             new_children.append(simplified)
     ret = group_all_sum_terms(new_children)
-    ret.sort(compare)
+    ret = sorted(ret, key=cmp_to_key(compare))
     #ret.reverse()
     return ret
 
@@ -214,8 +218,8 @@ def group_all_sum_terms(arg):
                 new_children[0] = n
         left = children[0:i]
         right = new_children[:]
-        total = left.expand(right)
-        children = total[:]
+        left.extend(right)
+        children = left[:]
         i = i + 1
     return children
 
@@ -255,11 +259,11 @@ def simplify_product_rec(children):
     for i in range(len(children)):
         simplified = simplify_product_rec(children[i].children) if kind(children[i]) == OP.MUL else children[i]
         if isinstance(simplified, list):
-            new_children.expand(simplified)
+            new_children.extend(simplified)
         else:
             new_children.append(simplified)
     ret = group_all_product_terms(new_children)
-    ret.sort(compare)
+    ret = sorted(ret, key=cmp_to_key(compare))
     return ret
 
 # Group Product Terms (l, r)

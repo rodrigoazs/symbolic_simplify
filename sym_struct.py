@@ -57,4 +57,4 @@ class SYM(Enum):
     SYM_IMAGINARY = "i"
     
 def createNode(type, value, childs):
-  return Node(type, value, childs);
+    return Node(type, value, childs)

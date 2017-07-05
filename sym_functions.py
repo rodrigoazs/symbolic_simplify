@@ -1,4 +1,4 @@
-import struct
+from sym_struct import *
 
 # Numerator Fun (v)
 # return an integer
@@ -90,7 +90,10 @@ def exponent(node):
 # an expression with main operator f and operands a, b, . . . , c. For
 # example, Construct (” + ”, [a, b, c]) → a + b + c. [page 9]
 def construct(operator, expressions):
-	return Node(NODE.OP, operator, expressions);
+    if(isinstance(expressions, list)):
+        return Node(NODE.OP, operator, expressions)
+    else:
+        return Node(NODE.OP, operator, [expressions])
 
 # Short def to construct sub as ASAE
 def construct_neg(a):
